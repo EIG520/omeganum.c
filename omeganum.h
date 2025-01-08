@@ -16,8 +16,10 @@ typedef struct {
 
 Big omeganum_zero();
 Big omeganum_from_double(double num_ieee);
+Big omeganum_clone(Big* num);
+Big omeganum_abs(Big num);
 
-void omeganum_free(Big num);
+void omeganum_free(Big* num);
 void omeganum_normalize(Big* num);
 void omeganum_expand_array_once(Big* num);
 void omeganum_reserve_step(Big* num);

@@ -21,8 +21,7 @@ void test_from_double() {
 
     while (!feof(file)) {
         fgets(buf, BUFSIZ, file);
-        char** _;
-        double testcase = strtod(buf, _);
+        double testcase = strtod(buf, NULL);
         Big num_omeganum = omeganum_from_double(testcase);
 
         double omeganum_value = num_omeganum.array[0];
