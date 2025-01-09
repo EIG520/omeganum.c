@@ -20,6 +20,12 @@ Big omeganum_from_double(double num_ieee) {
     return num_omeganum;
 }
 
+double omeganum_to_double(Big* num) {
+    if (num->array_size >= 2 && (num->array[1] >= 2 || num->array[0] >= MAX_FLOAT_E)) {return INFINITY * num->sign;}
+    if (num->array[1] == 1) {return pow(10, num->array[0]) * num->sign;}
+    return num->array[0] * num->sign;
+}
+
 void omeganum_free(Big* num) {
     free(num->array);
 }
@@ -28,15 +34,15 @@ Big omeganum_clone(Big* num) {
     Big cloned;
     cloned.sign = num->sign;
     cloned.array = (double*)calloc(num->max_array_size, sizeof(double));
-    memcpy(cloned.array, num->array, num->array_size);
+    memcpy(cloned.array, num->array, num->array_size * sizeof(double));
     cloned.array_size = num->array_size;
     cloned.max_array_size = num->max_array_size;
 
     return cloned;
 }
 
-Big omeganum_abs(Big num) {
-    Big cloned = omeganum_clone(&num);
+Big omeganum_abs(Big* num) {
+    Big cloned = omeganum_clone(num);
     cloned.sign = cloned.sign * cloned.sign;
 
     return cloned;
@@ -45,7 +51,7 @@ Big omeganum_abs(Big num) {
 void omeganum_normalize(Big* num) {
     while (num->array_size > 1 && num->array[num->array_size - 1] == 0) { num->array_size -= 1; }
 
-    for (int i = 0; i < num->array_size; i++) {
+    for (size_t i = 0; i < num->array_size; i++) {
         if (!isfinite(num->array[i])) {
             double invalid_entry = num->array[i];
             free(num->array);
@@ -88,7 +94,7 @@ void omeganum_normalize(Big* num) {
             run_again = true;
         }
 
-        for (int i = 0; i < num->array_size; i++) {
+        for (size_t i = 0; i < num->array_size; i++) {
             if (num->array[i] > MAX_SAFE_INTEGER) {
                 if (num->array_size < i+1) {omeganum_expand_array_once(num);}
 
