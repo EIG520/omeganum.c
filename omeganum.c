@@ -48,6 +48,30 @@ Big omeganum_abs(Big* num) {
     return cloned;
 }
 
+Big omeganum_negate(Big* num) {
+    Big cloned = omeganum_clone(num);
+    cloned.sign = -cloned.sign;
+
+    return cloned;
+}
+
+int omeganum_cmp(Big* num1, Big* num2) {
+    if (isnan(num1->array[0]) || isnan(num2->array[0])) {return nan;}
+    if (num1->array[0] == INFINITY && num2->array[0] != INFINITY) {return num1->sign;}
+    if (num2->array[0] == INFINITY && num1->array[0] != INFINITY) {return -num2->sign;}
+    if (num1->array_size == 1 && num2->array_size == 1 && num1->array[0] == 0 && num2->array[0] ==0) {return 0;}
+    if (num1->sign != num2->sign) {return num1->sign;}
+    if (num1->array_size > num2->array_size) {return num1->sign;}
+    if (num1->array_size < num2->array_size) {return -num1->sign;}
+
+    for (int i = num1->array_size - 1; i >= 0; i--) {
+        if (num1->array[i] > num2->array[i]) {return num1->sign;}
+        if (num2->array[i] > num1->array[i]) {return -num1->sign;}
+    }
+
+    return 0;
+}
+
 void omeganum_normalize(Big* num) {
     while (num->array_size > 1 && num->array[num->array_size - 1] == 0) { num->array_size -= 1; }
 
