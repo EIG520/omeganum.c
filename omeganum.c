@@ -11,12 +11,23 @@ Big omeganum_zero() {
 
 Big omeganum_from_double(double num_ieee) {
     Big num_omeganum;
-    num_omeganum.array = (double*)calloc(1, sizeof(double));
+    num_omeganum.array = (double*)calloc(1, sizeof(double)); 
     num_omeganum.array[0] = fabs(num_ieee);
     num_omeganum.array_size = num_omeganum.max_array_size = 1;
     num_omeganum.sign = (0 < num_ieee) - (num_ieee < 0);
+    
     omeganum_normalize(&num_omeganum);
+    return num_omeganum;
+}
 
+Big omeganum_from_parts(double* array, size_t len, int sign) {
+    Big num_omeganum;
+    num_omeganum.array = array;
+    num_omeganum.array_size = len;
+    num_omeganum.max_array_size = len;
+    num_omeganum.sign = sign;
+
+    omeganum_normalize(&num_omeganum);
     return num_omeganum;
 }
 
@@ -100,7 +111,7 @@ void omeganum_normalize(Big* num) {
             run_again = true;
         }
 
-        while (num->array[0] < MAX_E && num->array_size > 2 && num->array[1] > 0) {
+        while (num->array[0] < MAX_E && num->array_size >= 2 && num->array[1] > 0) {
             num->array[0] = pow(10, num->array[0]);
             num->array[1] --;
 
@@ -120,7 +131,7 @@ void omeganum_normalize(Big* num) {
 
         for (size_t i = 0; i < num->array_size; i++) {
             if (num->array[i] > MAX_SAFE_INTEGER) {
-                if (num->array_size < i+1) {omeganum_expand_array_once(num);}
+                if (num->array_size <= i+1) {omeganum_expand_array_once(num);}
 
                 num->array[i+1] ++;
                 num->array[0] = num->array[i] + 1;

@@ -4,13 +4,14 @@
 #include <math.h>
 
 #include "omeganum.c"
-#include "notations/standard.c"
+#include "notations/raw_array.c"
 #include "test.h"
 
 int main() {
     test_zero();
     test_from_double();
     test_abs();
+    test_from_raw();
 }
 
 // More a test of normalize than of from_double
@@ -30,11 +31,46 @@ void test_from_double() {
         assert(num_omeganum.max_array_size >= num_omeganum.array_size);
 
         assert(approx_eq(testcase, omeganum_value));
+
+        omeganum_free(&num_omeganum);
         cases ++;
     }
 
+    fclose(file);
+
     printf("Passed %i test cases from %s (from_double)", cases, FROM_DOUBLE_TEST_PATH);
     printf("\n");
+}
+
+void test_from_raw() {
+    FILE *in_file = fopen(FROM_RAW_TEST_PATH, "r");
+    FILE *expected_file = fopen(FROM_RAW_EXPECTED_PATH, "r");
+
+    char testcase[BUFSIZ];
+    char expected[BUFSIZ];
+    char* str;
+    int cases = 0;
+
+    while (!feof(in_file) & !feof(expected_file)) {
+        fgets(testcase, BUFSIZ, in_file);
+        fgets(expected, BUFSIZ, expected_file);
+
+        expected[strcspn(expected, "\n")] = 0;
+
+        Big num_omeganum = omeganum_from_string(testcase);
+        char* value = omeganum_to_string(num_omeganum);
+
+        assert(strcmp(expected, value) == 0);
+        cases ++;
+
+        free(value);
+        omeganum_free(&num_omeganum);
+    }
+
+    fclose(in_file);
+    fclose(expected_file);
+
+    printf("Passed %i test cases from %s (from_raw)\n", cases, FROM_RAW_TEST_PATH);
 }
 
 void test_abs() {
@@ -54,7 +90,12 @@ void test_abs() {
         
         assert(approx_eq(expected, omeganum_value));
         cases ++;
+
+        omeganum_free(&num_omeganum);
+        omeganum_free(&num_omeganum_abs);
     }
+
+    fclose(file);
 
     printf("Passed %i test cases from %s (abs)\n", cases, ABS_TEST_PATH);
 }
@@ -75,5 +116,7 @@ void test_zero() {
     for (size_t i = 0; i < zero.array_size; i++) { assert(zero.array[i] == 0); }
 
     printf("Passed zero test\n");
+
+    omeganum_free(&zero);
 }
 

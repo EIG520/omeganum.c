@@ -18,6 +18,7 @@ typedef struct {
 
 Big omeganum_zero();
 Big omeganum_from_double(double num_ieee);
+Big omeganum_from_parts(double* array, size_t len, int sign);
 Big omeganum_clone(Big* num);
 Big omeganum_abs(Big* num);
 Big omeganum_negate(Big* num);
