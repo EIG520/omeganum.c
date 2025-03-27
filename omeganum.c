@@ -16,8 +16,7 @@ Big omeganum_from_double(double num_ieee) {
     num_omeganum.array_size = num_omeganum.max_array_size = 1;
     num_omeganum.sign = (0 < num_ieee) - (num_ieee < 0);
     
-    omeganum_normalize(&num_omeganum);
-    return num_omeganum;
+    return *omeganum_normalize_(&num_omeganum);
 }
 
 Big omeganum_from_parts(double* array, size_t len, int sign) {
@@ -27,8 +26,7 @@ Big omeganum_from_parts(double* array, size_t len, int sign) {
     num_omeganum.max_array_size = len;
     num_omeganum.sign = sign;
 
-    omeganum_normalize(&num_omeganum);
-    return num_omeganum;
+    return *omeganum_normalize_(&num_omeganum);
 }
 
 double omeganum_to_double(Big* num) {
@@ -54,20 +52,26 @@ Big omeganum_clone(Big* num) {
 
 Big omeganum_abs(Big* num) {
     Big cloned = omeganum_clone(num);
-    cloned.sign = cloned.sign * cloned.sign;
+    return *omeganum_abs_(&cloned);
+}
 
-    return cloned;
+Big* omeganum_abs_(Big* num) {
+    num->sign = num->sign * num->sign;
+    return num;
 }
 
 Big omeganum_negate(Big* num) {
     Big cloned = omeganum_clone(num);
-    cloned.sign = -cloned.sign;
+    return *omeganum_negate_(&cloned);
+}
 
-    return cloned;
+Big* omeganum_negate_(Big* num) {
+    num->sign *= -1;
+    return num;
 }
 
 int omeganum_cmp(Big* num1, Big* num2) {
-    if (isnan(num1->array[0]) || isnan(num2->array[0])) {return nan;}
+    if (isnan(num1->array[0]) || isnan(num2->array[0])) {return 42;}
     if (num1->array[0] == INFINITY && num2->array[0] != INFINITY) {return num1->sign;}
     if (num2->array[0] == INFINITY && num1->array[0] != INFINITY) {return -num2->sign;}
     if (num1->array_size == 1 && num2->array_size == 1 && num1->array[0] == 0 && num2->array[0] ==0) {return 0;}
@@ -83,7 +87,12 @@ int omeganum_cmp(Big* num1, Big* num2) {
     return 0;
 }
 
-void omeganum_normalize(Big* num) {
+Big omeganum_normalize(Big* num) {
+    Big cloned = omeganum_clone(num);
+    return *omeganum_normalize_(&cloned);
+}
+
+Big* omeganum_normalize_(Big* num) {
     while (num->array_size > 1 && num->array[num->array_size - 1] == 0) { num->array_size -= 1; }
 
     for (size_t i = 0; i < num->array_size; i++) {
@@ -93,7 +102,7 @@ void omeganum_normalize(Big* num) {
             num->array = calloc(1, sizeof(double));
             num->array[0] = invalid_entry;
             num->array_size = num->max_array_size = 1;
-            return;
+            return num;
         }
     }
 
@@ -141,6 +150,8 @@ void omeganum_normalize(Big* num) {
             }
         }
     }
+
+    return num;
 }
 
 void omeganum_expand_array_once(Big* num) {

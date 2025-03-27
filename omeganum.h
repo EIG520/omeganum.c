@@ -21,7 +21,11 @@ Big omeganum_from_double(double num_ieee);
 Big omeganum_from_parts(double* array, size_t len, int sign);
 Big omeganum_clone(Big* num);
 Big omeganum_abs(Big* num);
+Big* omeganum_abs_(Big* num);
 Big omeganum_negate(Big* num);
+Big* omeganum_negate_(Big* num);
+Big omeganum_normalize(Big* num);
+Big* omeganum_normalize_(Big* num);
 
 int omeganum_cmp(Big* num1, Big* num2);
 double omeganum_to_double(Big* num);
@@ -34,7 +38,6 @@ int omeganum_eq(Big* num1, Big* num2) { return omeganum_cmp(num1, num2) == 0; }
 int omeganum_neq(Big* num1, Big* num2) { return omeganum_cmp(num1, num2) != 0; }
 
 void omeganum_free(Big* num);
-void omeganum_normalize(Big* num);
 void omeganum_expand_array_once(Big* num);
 void omeganum_reserve_step(Big* num);
 
