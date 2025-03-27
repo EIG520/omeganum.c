@@ -71,7 +71,7 @@ Big* omeganum_negate_(Big* num) {
 }
 
 int omeganum_cmp(Big* num1, Big* num2) {
-    if (isnan(num1->array[0]) || isnan(num2->array[0])) {return 42;}
+    if (isnan(num1->array[0]) || isnan(num2->array[0])) {return NAN_INT;}
     if (num1->array[0] == INFINITY && num2->array[0] != INFINITY) {return num1->sign;}
     if (num2->array[0] == INFINITY && num1->array[0] != INFINITY) {return -num2->sign;}
     if (num1->array_size == 1 && num2->array_size == 1 && num1->array[0] == 0 && num2->array[0] ==0) {return 0;}

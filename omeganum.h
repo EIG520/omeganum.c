@@ -5,7 +5,10 @@
 #ifndef OMEGANUM_H
 #define OMEGANUM_H
 
+#define NAN_INT 42 
 #define MAX_SAFE_INTEGER 9007199254740992
+#define E_MAX_SAFE_INTEGER omeganum_from_parts({9007199254740992.0, 1.0}, 2, 1)
+#define EE_MAX_SAFE_INTEGER omeganum_from_parts({9007199254740992.0, 2.0}, 2, 1)
 #define MAX_E log10(MAX_SAFE_INTEGER)
 #define MAX_FLOAT_E log10(DBL_MAX)
 
@@ -15,6 +18,8 @@ typedef struct {
     size_t array_size;
     size_t max_array_size;
 } Big;
+
+// Functions ending with _ will return a pointer to the result and may modify the args
 
 Big omeganum_zero();
 Big omeganum_from_double(double num_ieee);
@@ -26,16 +31,20 @@ Big omeganum_negate(Big* num);
 Big* omeganum_negate_(Big* num);
 Big omeganum_normalize(Big* num);
 Big* omeganum_normalize_(Big* num);
+Big omeganum_add(Big* num, Big* other);
+Big* omeganum_add_(Big* num, Big* other);
 
-int omeganum_cmp(Big* num1, Big* num2);
 double omeganum_to_double(Big* num);
 
+int omeganum_cmp(Big* num1, Big* num2);
 int omeganum_gt(Big* num1, Big* num2) { return omeganum_cmp(num1, num2) > 0; }
 int omeganum_lt(Big* num1, Big* num2) { return omeganum_cmp(num1, num2) < 0; }
 int omeganum_gte(Big* num1, Big* num2) { return omeganum_cmp(num1, num2) >= 0; }
 int omeganum_lte(Big* num1, Big* num2) { return omeganum_cmp(num1, num2) <= 0; }
 int omeganum_eq(Big* num1, Big* num2) { return omeganum_cmp(num1, num2) == 0; }
 int omeganum_neq(Big* num1, Big* num2) { return omeganum_cmp(num1, num2) != 0; }
+Big* omeganum_max(Big* num1, Big* num2) { if (omeganum_gt(num1, num2)) { return num1; } else { return num2; } };
+Big* omeganum_min(Big* num1, Big* num2) { if (omeganum_gt(num1, num2)) { return num2; } else { return num1; } };
 
 void omeganum_free(Big* num);
 void omeganum_expand_array_once(Big* num);
