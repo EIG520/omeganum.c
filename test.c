@@ -112,7 +112,7 @@ bool approx_eq(double target, double value) {
 
 // Sanity check
 void test_zero() {
-    Big zero = omeganum_zero();
+    Big zero = omeganum_from_double(0);
     for (size_t i = 0; i < zero.array_size; i++) { assert(zero.array[i] == 0); }
 
     printf("Passed zero test\n");

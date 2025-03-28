@@ -7,8 +7,6 @@
 
 #define NAN_INT 42 
 #define MAX_SAFE_INTEGER 9007199254740992
-#define E_MAX_SAFE_INTEGER omeganum_from_parts({9007199254740992.0, 1.0}, 2, 1)
-#define EE_MAX_SAFE_INTEGER omeganum_from_parts({9007199254740992.0, 2.0}, 2, 1)
 #define MAX_E log10(MAX_SAFE_INTEGER)
 #define MAX_FLOAT_E log10(DBL_MAX)
 
@@ -19,11 +17,14 @@ typedef struct {
     size_t max_array_size;
 } Big;
 
-// Functions ending with _ will return a pointer to the result and may modify the args
-
-Big omeganum_zero();
+// Create a bignum
+Big omeganum_e_max();
+Big omeganum_ee_max();
 Big omeganum_from_double(double num_ieee);
 Big omeganum_from_parts(double* array, size_t len, int sign);
+
+// Functions ending with _ will return a pointer to the result and may modify the args
+
 Big omeganum_clone(Big* num);
 Big omeganum_abs(Big* num);
 Big* omeganum_abs_(Big* num);

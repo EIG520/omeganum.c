@@ -5,18 +5,26 @@
 #include <string.h>
 #include "omeganum.h"
 
-Big omeganum_zero() {
-    return omeganum_from_double(0.0);
+Big omeganum_e_max() {
+    double* arr = calloc(2, sizeof(double));
+    arr[0] = MAX_SAFE_INTEGER;
+    arr[1] = 1;
+    return omeganum_from_parts(arr, 2, 1);
+}
+
+Big omeganum_ee_max() {
+    double* arr = calloc(2, sizeof(double));
+    arr[0] = MAX_SAFE_INTEGER;
+    arr[1] = 2;
+    return omeganum_from_parts(arr, 2, 1);
 }
 
 Big omeganum_from_double(double num_ieee) {
-    Big num_omeganum;
-    num_omeganum.array = (double*)calloc(1, sizeof(double)); 
-    num_omeganum.array[0] = fabs(num_ieee);
-    num_omeganum.array_size = num_omeganum.max_array_size = 1;
-    num_omeganum.sign = (0 < num_ieee) - (num_ieee < 0);
-    
-    return *omeganum_normalize_(&num_omeganum);
+    double* arr = calloc(1, sizeof(double));
+    int sign = (num_ieee >= 0) * 2 - 1;
+    arr[0] = num_ieee * sign;
+
+    return omeganum_from_parts(arr, 1, sign);
 }
 
 Big omeganum_from_parts(double* array, size_t len, int sign) {
@@ -56,7 +64,7 @@ Big omeganum_abs(Big* num) {
 }
 
 Big* omeganum_abs_(Big* num) {
-    num->sign = num->sign * num->sign;
+    num->sign = 1;
     return num;
 }
 
